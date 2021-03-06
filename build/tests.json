@@ -1,0 +1,19 @@
+{
+  "contracts": {
+    "Bank": "5cecaddd97161b4437659b3bfc58aa3a11687b69",
+    "SafeMath": "3b4158955f564edb18bd7a8ffdb49859c904f0b7",
+    "Token": "ac1c0a6798f50e64a9f1d30063e09b47b8c7afa9"
+  },
+  "tests": {
+    "tests/loan_test.py": {
+      "coverage": false,
+      "isolated": [
+        "Bank"
+      ],
+      "results": "...",
+      "sha1": "8dce3af951e841d07cc12d0e6c5a0eedd509ad09",
+      "txhash": []
+    }
+  },
+  "tx": {}
+}

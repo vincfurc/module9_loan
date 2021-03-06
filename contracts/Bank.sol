@@ -37,15 +37,13 @@ contract Bank {
     //fee per second
     uint FEE =  1 gwei;
 
-    constructor() public {
-         owner = msg.sender;
+    constructor() payable public {
     }
 
 
-    function deposit (uint256 amount) public payable {
+    function deposit(uint256 amount) public payable {
         require(msg.sender.balance >= amount, "Insufficient balance.");
         lenders_.push(msg.sender);
-        payable(address(this)).transfer(amount);
         lenders[msg.sender].amount_lent += amount;
      }
 
@@ -57,7 +55,7 @@ contract Bank {
         uint idx = borrowers[msg.sender].loan_count + 1;
         borrowers[msg.sender].loans[idx] = new_loan;
         borrowers[msg.sender].amount_borrowed += amount;
-        msg.sender.call{value:amount};
+        msg.sender.transfer(amount);
         return idx;
      }
 
@@ -66,7 +64,7 @@ contract Bank {
         require(address(this).balance >= amount);
         require(lenders[msg.sender].amount_lent >= amount);
         lenders[msg.sender].amount_lent -= amount;
-        msg.sender.call{value:amount};
+        msg.sender.transfer(amount);
      }
 
     function repay_full_loan(uint loan_idx) public payable {
@@ -100,6 +98,5 @@ contract Bank {
     }
 
     receive() external payable { }
-
 
 }
