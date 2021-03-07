@@ -40,17 +40,3 @@ def test_borrowed_amount_in_borrowers_list(bank):
     bank.borrow( "10 ether", {'from': accounts[1]})
     tot = bank.get_loan_amount(0,{'from': accounts[1]})
     assert tot == "10 ether"
-
-def test_interests_accumulate(bank, chain):
-    bank.deposit( "50 ether", {'from': accounts[0],'amount': "50 ether"})
-    balance = bank.balance();
-    bank.borrow( "10 ether", {'from': accounts[1]})
-    t0 = chain.time()
-    # sleep for 1 second
-    chain.sleep(1)
-    #Sleeping does not mine a new block. Contract view functions that rely on block.timestamp will be unaffected until you perform a transaction or call chain.mine.
-    chain.mine(1)
-    t1 = chain.time()
-    tot = bank.get_fee_accumulated_on_loan((0), {'from': accounts[1]})
-    tot_expected = (t1-t0)* 1000000000
-    assert tot == tot_expected
