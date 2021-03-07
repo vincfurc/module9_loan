@@ -13,23 +13,23 @@ contract Bank {
         uint amount_borrowed;
         uint weight;
         uint loan_count;
-        mapping(uint => Loan) loans;
+        //bool isValue;
     }
 
     struct Lender {
         uint amount_lent;
         uint weight;
+        bool isValue;
     }
 
     struct Loan {
-        uint amount_deposited;
+        uint amount_borrowed;
         uint amount_lent;
         uint timestamp;
     }
 
-
-    address payable owner;
-    mapping(address => Borrower) borrowers;
+    mapping(address => Loan[]) loans;
+    mapping(address => Borrower) public borrowers;
     mapping(address => Lender) lenders;
 
     address[] public lenders_;
@@ -48,16 +48,21 @@ contract Bank {
      }
 
 
-    function borrow(uint256 amount) public returns (uint256)  {
-        //User storage sender = users[msg.sender];
+    function borrow(uint256 amount) public {
         require(address(this).balance >= amount);
         Loan memory new_loan = Loan(amount,0, block.timestamp);
-        uint idx = borrowers[msg.sender].loan_count + 1;
-        borrowers[msg.sender].loans[idx] = new_loan;
-        borrowers[msg.sender].amount_borrowed += amount;
+        _update_borrowers(new_loan, amount);
         msg.sender.transfer(amount);
-        return idx;
      }
+
+     function _update_borrowers(Loan memory new_loan, uint256 amount) internal {
+        Borrower storage borrower = borrowers[msg.sender];
+         borrower.loan_count = borrower.loan_count + 1;
+         borrower.amount_borrowed += amount;
+         loans[msg.sender].push(new_loan);
+         /* loans[msg.sender][borrower.loan_count].amount_borrowed = new_loan.amount_borrowed;
+         loans[msg.sender][borrower.loan_count].timestamp = new_loan.timestamp; */
+         }
 
 
     function withdraw(uint256 amount) public {
@@ -69,7 +74,7 @@ contract Bank {
 
     function repay_full_loan(uint loan_idx) public payable {
         require(borrowers[msg.sender].amount_borrowed > 0);
-        uint total_fee = (block.timestamp - borrowers[msg.sender].loans[loan_idx].timestamp) * 86400 * FEE;
+        uint total_fee = (block.timestamp - loans[msg.sender][loan_idx].timestamp) * 86400 * FEE;
         uint total_to_repay = borrowers[msg.sender].amount_borrowed + total_fee;
         require(msg.sender.balance >= total_to_repay);
         address(this).call{value:total_to_repay};
@@ -95,6 +100,30 @@ contract Bank {
                 addr.call{value:fee_share};
             }
         }
+    }
+
+    function get_loans_count() public view returns (uint256){
+      return borrowers[msg.sender].loan_count;
+    }
+
+    function get_borrowed_amount() public view returns (uint256){
+      return borrowers[msg.sender].amount_borrowed;
+    }
+
+    function get_loan_amount(uint loan_id) public view returns (uint){
+      return loans[msg.sender][loan_id].amount_borrowed;
+    }
+
+    function get_loan_timestamp(uint loan_id) public view returns (uint){
+      return loans[msg.sender][loan_id].timestamp;
+    }
+
+    function get_fee_accumulated_on_loan(uint loan_id) public view returns (uint){
+      uint start_time =  loans[msg.sender][loan_id].timestamp;
+      require(start_time>0);
+      uint total_fee = (block.timestamp - start_time) * FEE;
+      uint total_to_repay = loans[msg.sender][loan_id].amount_borrowed + total_fee;
+      return total_fee;
     }
 
     receive() external payable { }
