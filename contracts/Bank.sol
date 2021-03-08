@@ -52,7 +52,7 @@ contract Bank {
 
 
     function borrow(uint256 amount) public {
-        require(address(this).balance >= amount);
+        require(address(this).balance >= amount);// dev: Insufficient balance in Contract
         Loan memory new_loan = Loan(amount,0, block.timestamp);
         _update_borrowers(new_loan, amount);
         msg.sender.transfer(amount);

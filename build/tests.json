@@ -9,8 +9,8 @@
       "isolated": [
         "Bank"
       ],
-      "results": "....",
-      "sha1": "fc02b7df08547c2d79721f9d0203ec25ac26f80a",
+      "results": "......",
+      "sha1": "eefadf7624deb73a15cc7539101f2da0ea610b75",
       "txhash": []
     },
     "tests/failures_test.py": {
@@ -37,7 +37,7 @@
         "Bank"
       ],
       "results": "....",
-      "sha1": "5ed8f5a1725257900bfb06e7f11f5e736fe54782",
+      "sha1": "d59a5ad25b035de829637a0217b02069a9d9361f",
       "txhash": []
     },
     "tests/loan_test.py": {
@@ -55,7 +55,7 @@
         "Bank"
       ],
       "results": ".....",
-      "sha1": "e9d4117eb03d716c3fb6cde4fb567562fab15e81",
+      "sha1": "3feda7e70bf8b532f0f5514b92452b6c9f4bcfbc",
       "txhash": []
     },
     "tests/weight_test.py": {
@@ -64,7 +64,7 @@
         "Bank"
       ],
       "results": ".",
-      "sha1": "3edcd885070e8c2139fe20910853bdb9643c7edc",
+      "sha1": "bc946e7c924c5de7bf0377073df6e9668de47ab6",
       "txhash": []
     }
   },
