@@ -1,13 +1,15 @@
 {
   "contracts": {
-    "Bank": "5e73898488ca80a5e4e1544afbba947dcfaca327",
+    "ABDKMath64x64": "3b4158955f564edb18bd7a8ffdb49859c904f0b7",
+    "Bank": "8c698f1049d7db92d68e610c47e685d9e62b1048",
     "SafeMath": "3b4158955f564edb18bd7a8ffdb49859c904f0b7"
   },
   "tests": {
     "tests/borrow_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
       "results": "......",
       "sha1": "eefadf7624deb73a15cc7539101f2da0ea610b75",
@@ -16,12 +18,13 @@
     "tests/failures_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
-      "results": ".",
-      "sha1": "d0449e1423a1dca6872941e4b91fea65527281ed",
+      "results": "..",
+      "sha1": "d1ed1efa3f870beb171f36de4207948a7d94dcad",
       "txhash": [
-        "0ffe85ad0fe3acd18eeff9facef85d66750e2974"
+        "6e97cd8ad2f5883cc47fdf70c36784cf36f28d4b"
       ]
     },
     "tests/fee_distribution_test.py": {
@@ -34,7 +37,8 @@
     "tests/lend_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
       "results": "....",
       "sha1": "d59a5ad25b035de829637a0217b02069a9d9361f",
@@ -43,7 +47,8 @@
     "tests/loan_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
       "results": "...",
       "sha1": "18d56721f429e5719ab03dadb73f96327c44c2a3",
@@ -52,31 +57,33 @@
     "tests/repay_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
-      "results": ".....",
-      "sha1": "3feda7e70bf8b532f0f5514b92452b6c9f4bcfbc",
+      "results": "....F",
+      "sha1": "0fcf8f60b50b51553d544a446733fca3a9587ea2",
       "txhash": []
     },
     "tests/weight_test.py": {
       "coverage": false,
       "isolated": [
-        "Bank"
+        "Bank",
+        "SafeMath"
       ],
-      "results": ".",
-      "sha1": "bc946e7c924c5de7bf0377073df6e9668de47ab6",
+      "results": "..",
+      "sha1": "938582d0997cd30a03c6f2c2a67310b621a1f0cd",
       "txhash": []
     }
   },
   "tx": {
-    "0ffe85ad0fe3acd18eeff9facef85d66750e2974": {
+    "6e97cd8ad2f5883cc47fdf70c36784cf36f28d4b": {
       "Bank": {
-        "0": [
+        "1": [
           [
-            17
+            19
           ],
           [
-            38
+            47
           ],
           []
         ]

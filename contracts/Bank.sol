@@ -2,6 +2,8 @@
 
 pragma solidity ^0.6.6;
 
+import "./SafeMath.sol";
+import "./ABDKMath64x64.sol";
 /**
  * @title loan
  * @dev borrow and loan money
@@ -9,35 +11,38 @@ pragma solidity ^0.6.6;
 
 contract Bank {
 
+    using SafeMath for uint256;
+
     struct Borrower {
-        uint amount_borrowed;
-        uint weight;
-        uint loan_count;
+        uint256 amount_borrowed;
+        uint256 weight;
+        uint256 loan_count;
         //bool isValue;
     }
 
     struct Lender {
-        uint amount_lent;
-        uint last_weight;
+        uint256 amount_lent;
+        uint256 last_weight;
         /* bool isValue; */
     }
 
     struct Loan {
-        uint amount_borrowed;
-        uint amount_lent;
-        uint timestamp;
+        uint256 amount_borrowed;
+        uint256 amount_lent;
+        uint256 timestamp;
     }
 
     mapping(address => Borrower) public borrowers;
     mapping(address => Lender) public lenders;
+    mapping(address => uint256) public accumulated_earnings;
     mapping(address => Loan[]) loans;
     mapping(address => Loan[]) deposits;
 
     address[] public lenders_;
-    uint total_supply;
+    uint256 public total_supply;
 
     //fee per second
-    uint FEE =  1 gwei;
+    uint256 FEE =  1 gwei;
 
     constructor() payable public {
     }
@@ -82,41 +87,52 @@ contract Bank {
         msg.sender.transfer(amount);
      }
 
-    function repay_full_loan(uint loan_idx) public payable {
+     function withdraw_fees() public {
+         require(accumulated_earnings[msg.sender] > 0);
+         uint256 to_pay = accumulated_earnings[msg.sender];
+         accumulated_earnings[msg.sender] = 0;
+         msg.sender.transfer(to_pay);
+      }
+
+    function repay_full_loan(uint256 loan_idx) public payable {
         require(borrowers[msg.sender].amount_borrowed > 0);
-        uint total_fee = get_fee_accumulated_on_loan(loan_idx);
-        uint total_to_repay = loans[msg.sender][loan_idx].amount_borrowed + total_fee;
+        uint256 total_fee = get_fee_accumulated_on_loan(loan_idx);
+        uint256 total_to_repay = loans[msg.sender][loan_idx].amount_borrowed + total_fee;
         require(msg.value >= total_to_repay);
         if(msg.value > total_to_repay){
-          uint change = msg.value - total_to_repay;
+          uint256 change = msg.value - total_to_repay;
           borrowers[msg.sender].amount_borrowed = 0;
           msg.sender.transfer(change);
         }
+        require(total_fee>0);
         distribute_fees(total_fee);
      }
 
-     function calculate_weight(address _lender_address) public view returns (uint256) {
-        uint weight = lenders[_lender_address].amount_lent / total_supply;
-        return weight;
-     }
 
     function total_available_to_borrow() public view returns (uint256) {
         return address(this).balance;
      }
 
-    function distribute_fees(uint fees_received) internal {
-      /* payable(lenders_[0]).transfer(fees_paid); */
-        for(uint8 i=0; i< lenders_.length; i++){
+    function distribute_fees(uint256 fees_received) private {
+        require(fees_received>0);
+        for(uint256 i=0; i< lenders_.length; i++){
             if (lenders[lenders_[i]].amount_lent>0) {
-                address addr   = lenders_[i];
+                address addr   = get_lender_address(i);
                 uint256 weight = calculate_weight(addr);
                 lenders[lenders_[i]].last_weight = weight;
-                uint256 fee_share = fees_received * weight;
-                fees_received = 0;
-                payable(addr).transfer(fee_share);
+                uint256 fee_share = (fees_received * weight)/100;
+                accumulated_earnings[addr] += fee_share;
             }
         }
+    }
 
+    function calculate_weight(address _lender_address) public view returns (uint256) {
+       uint256 weight = (100 * lenders[_lender_address].amount_lent) / total_supply;
+       return weight;
+    }
+
+    function calculate_weight_a(address _lender_address) public view returns (uint256) {
+       return lenders[_lender_address].amount_lent;
     }
 
     function get_loans_count() public view returns (uint256){
@@ -127,38 +143,45 @@ contract Bank {
       return borrowers[msg.sender].amount_borrowed;
     }
 
-    function get_loan_amount(uint loan_id) public view returns (uint){
+    function get_loan_amount(uint256 loan_id) public view returns (uint256){
       return loans[msg.sender][loan_id].amount_borrowed;
     }
 
-    function get_loan_timestamp(uint loan_id) public view returns (uint){
+    function get_loan_timestamp(uint256 loan_id) public view returns (uint256){
       return loans[msg.sender][loan_id].timestamp;
     }
 
-    function get_fee_accumulated_on_loan(uint loan_id) public view returns (uint){
-      uint start_time =  loans[msg.sender][loan_id].timestamp;
+    function get_fee_accumulated_on_loan(uint256 loan_id) public view returns (uint256){
+      uint256 start_time =  loans[msg.sender][loan_id].timestamp;
       require(start_time>0);
-      uint total_fee = (block.timestamp - start_time) * FEE;
-      //uint total_to_repay = loans[msg.sender][loan_id].amount_borrowed + total_fee;
+      uint256 total_fee = (block.timestamp - start_time) * FEE;
+      //uint256 total_to_repay = loans[msg.sender][loan_id].amount_borrowed + total_fee;
       return total_fee;
     }
 
-    function get_number_of_lenders() public view returns (uint){
+    function get_number_of_lenders() public view returns (uint256){
       return lenders_.length;
     }
 
-    function get_lender_address(uint i) public view returns (address){
+    function get_lender_address(uint256 i) public view returns (address){
       return lenders_[i];
     }
 
-    function get_lender_weight() public view returns (uint){
+    function get_lender_weight() public view returns (uint256){
       return lenders[msg.sender].last_weight;
     }
 
-    function get_lent_amount() public view returns (uint){
+    function get_lent_amount() public view returns (uint256){
       return lenders[msg.sender].amount_lent;
     }
 
+    function get_accumulated_earnings() public view returns (uint256){
+      return accumulated_earnings[msg.sender];
+    }
+
+    function get_total_supply() public view returns (uint256){
+      return total_supply;
+    }
     receive() external payable { }
 
 }

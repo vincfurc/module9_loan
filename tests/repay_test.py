@@ -47,12 +47,22 @@ def test_change_is_given_back(bank,chain):
 
 def test_repaying_affects_lenders_balance(bank, chain):
     bank.deposit( "50 ether", {'from': accounts[0],'amount': "50 ether"})
+    bank.deposit( "30 ether", {'from': accounts[3],'amount': "30 ether"})
     bank.borrow( "10 ether", {'from': accounts[1]})
-    balance = accounts[0].balance();
+    balance0 = accounts[0].balance();
+    balance3 = accounts[3].balance();
+    n = bank.get_number_of_lenders()
+    assert n>0
     # sleep for 1 second
     chain.sleep(1)
     #Sleeping does not mine a new block. Contract view functions that rely on block.timestamp will be unaffected until you perform a transaction or call chain.mine.
     chain.mine(1)
+    fee = bank.get_fee_accumulated_on_loan(0, {'from': accounts[1]})
+    assert fee > 0
     bank.repay_full_loan(0, {'from': accounts[1], 'amount': "15 ether" })
-    # bank.distribute_fees(200000000000000, {'from':bank.address})
-    assert accounts[0].balance() > balance
+    earned = bank.get_accumulated_earnings({'from': accounts[0]})
+    assert earned>0
+    bank.withdraw_fees({'from': accounts[0]})
+    bank.withdraw_fees({'from': accounts[3]})
+    assert accounts[0].balance() > balance0
+    assert accounts[3].balance() > balance3
