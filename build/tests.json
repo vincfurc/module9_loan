@@ -1,7 +1,7 @@
 {
   "contracts": {
     "ABDKMath64x64": "3b4158955f564edb18bd7a8ffdb49859c904f0b7",
-    "Bank": "43c668bedf03f478074713be4317ff5881109a45",
+    "Bank": "63e092069f2c904333d42ff1f359ab2adcbb5725",
     "SafeMath": "3b4158955f564edb18bd7a8ffdb49859c904f0b7"
   },
   "tests": {
@@ -22,7 +22,8 @@
       "results": "..",
       "sha1": "d1ed1efa3f870beb171f36de4207948a7d94dcad",
       "txhash": [
-        "6e97cd8ad2f5883cc47fdf70c36784cf36f28d4b"
+        "00edbf11774abd790561b0539281233bcd81d352",
+        "439dd8039944aba93334c2a28385991e76b5d07a"
       ]
     },
     "tests/fee_distribution_test.py": {
@@ -37,8 +38,8 @@
       "isolated": [
         "Bank"
       ],
-      "results": "....",
-      "sha1": "d59a5ad25b035de829637a0217b02069a9d9361f",
+      "results": "...",
+      "sha1": "4ef6730de7ad8b9aad552784a1e7d25a4fdb3a7a",
       "txhash": []
     },
     "tests/loan_test.py": {
@@ -56,7 +57,7 @@
         "Bank"
       ],
       "results": ".....",
-      "sha1": "0fcf8f60b50b51553d544a446733fca3a9587ea2",
+      "sha1": "f77df537e39cd1b74d138925da4fa1c5747a7337",
       "txhash": []
     },
     "tests/weight_test.py": {
@@ -64,20 +65,33 @@
       "isolated": [
         "Bank"
       ],
-      "results": "..",
-      "sha1": "938582d0997cd30a03c6f2c2a67310b621a1f0cd",
+      "results": ".",
+      "sha1": "5d5786bac613a2599d9d041723b3d97c933ce675",
       "txhash": []
     }
   },
   "tx": {
-    "6e97cd8ad2f5883cc47fdf70c36784cf36f28d4b": {
+    "00edbf11774abd790561b0539281233bcd81d352": {
       "Bank": {
         "1": [
           [
-            18
+            19
           ],
           [
-            45
+            44
+          ],
+          []
+        ]
+      }
+    },
+    "439dd8039944aba93334c2a28385991e76b5d07a": {
+      "Bank": {
+        "1": [
+          [
+            16
+          ],
+          [
+            43
           ],
           []
         ]
