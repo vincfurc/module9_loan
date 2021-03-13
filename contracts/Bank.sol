@@ -43,7 +43,7 @@ contract Bank {
 
     constructor() payable public {
       // interests accumulated at contract deployment
-      rewards_pool = 1;
+      rewards_pool = 0;
     }
 
     // lenders deposit
